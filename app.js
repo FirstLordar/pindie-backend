@@ -1,10 +1,12 @@
 const express = require('express');
-const mainRoute = require('./routers/main');
-const gamesRouter = require('./routers/games');
-const usersRouter = require('./routers/users');
-const categoriesRouter = require('./routers/categories')
+const mainRoute = require('./routes/main');
+const gamesRouter = require('./routes/games');
+const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories')
 const path = require('path');
 const bodyParser = require('body-parser');
+
+
 const cors = require('./middlewares/cors');
 const connectToDatabase = require('./database/connect');
 
@@ -14,14 +16,14 @@ const app = express();
 connectToDatabase();
 
 app.use(
-  cors,
+  cors, 
   bodyParser.json(),
   express.static(path.join(__dirname, 'public')),
-  mainRoute,
-  gamesRouter,
-  usersRouter,
-  categoriesRouter
-)
+  usersRouter, 
+  gamesRouter, 
+  categoriesRouter,
+  mainRoute
+);
 
 app.listen(PORT, () => {
   console.log(`Server is running at PORT http://localhost:${PORT}`);
