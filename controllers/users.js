@@ -20,7 +20,13 @@ const sendUserUpdated = (req, res) => {
 
 const sendUserDeleted = (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ message: 'Пользователь Удален' }));
+  res.end(JSON.stringify(req.user));
+}
+
+const sendMe = (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(req.user));
+
 }
 
 module.exports = {
@@ -28,5 +34,6 @@ module.exports = {
   sendUserCreated,
   sendUserById,
   sendUserUpdated,
-  sendUserDeleted
+  sendUserDeleted,
+  sendMe
 };

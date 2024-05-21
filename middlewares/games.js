@@ -2,15 +2,22 @@
 const games = require("../models/game");
 
 const findAllGames = async (req, res, next) => {
-  req.gamesArray = await games.find({})
-  .populate("categories")
-  .populate("users")
-  .populate({
-    path: 'users',
-    select: '-password'
-  });
+  if(req.query["categories.name"]) { 
+    req.gamesArray = await games.findGameByCategory(req.query["categories.name"]);
+    next();
+    return;
+  }
+
+  req.gamesArray = await games
+    .find({})
+    .populate("categories")
+    .populate({
+      path: "users",
+      select: "-password"
+    })
   next();
 };
+
 
 
 const createGame = async (req, res, next) => {
@@ -20,26 +27,26 @@ const createGame = async (req, res, next) => {
     req.game = await games.create(req.body)
     next()
   } catch {
-res.setHeader("Content-Type", "application/json")
-res.status(400).send(JSON.stringify({ message: "Ошибка создания игры" }))
+    res.setHeader("Content-Type", "application/json")
+    res.status(400).send(JSON.stringify({ message: "Ошибка создания игры" }))
   }
 }
 
 
 const findGameById = async (req, res, next) => {
-try {
-req.game = await games.findById(req.params.id)
-.populate("categories")
-.populate("users")
-.populate({
-    path: 'users',
-    select: '-password'
-  });
-next()
-} catch (error) {
-res.setHeader("Conten-Type", "application/json")
-res.status(404).send(JSON.stringify({message: 'Игра не найдена'}))
-}
+  try {
+    req.game = await games.findById(req.params.id)
+      .populate("categories")
+      .populate("users")
+      .populate({
+        path: 'users',
+        select: '-password'
+      });
+    next()
+  } catch (error) {
+    res.setHeader("Conten-Type", "application/json")
+    res.status(404).send(JSON.stringify({ message: 'Игра не найдена' }))
+  }
 }
 
 const updateGame = async (req, res, next) => {
@@ -54,12 +61,11 @@ const updateGame = async (req, res, next) => {
 
 const deleteGame = async (req, res, next) => {
   try {
-req.game = await games.findByIdAndDelete(req.params.id)
-next()
+    req.game = await games.findByIdAndDelete(req.params.id)
+    next()
   } catch (error) {
-    res.setHeader("Content-Type", "application/json");
-    res.status(400).send(JSON.stringify({ message: "Ошибка удаления игры" }));
-  }
+    res.status(400).send({ message: "Error deleting game" });
+    }
 }
 
 const checkEmptyFiles = async (req, res, next) => {
@@ -71,10 +77,54 @@ const checkEmptyFiles = async (req, res, next) => {
     !req.body.developer
   ) {
     res.setHeader('Content-Type', 'application/json')
-    res.status(404).send(JSON.stringify({messaage: 'Заполни пустые поля'}))
+    res.status(404).send(JSON.stringify({ messaage: 'Заполни пустые поля' }))
   } else {
     next()
   }
 }
 
-module.exports = {findAllGames, createGame, findGameById, updateGame, deleteGame, checkEmptyFiles};
+const checkIfCategoriesAvaliable = async (req, res, next) => {
+  if (!req.body.categories || req.body.categories.length === 0) {
+    res.setHeader("Content-Type", "application/json");
+        res.status(400).send(JSON.stringify({ message: "Выберите хотя бы одну категорию" }));
+  } else {
+    next();
+  }
+}; 
+const checkIfUsersAreSafe = async (req, res, next) => {
+  if (!req.body.users) {
+    next();
+    return;
+  }
+  if (req.body.users.length - 1 === req.game.users.length) {
+    next();
+    return;
+  } else {
+    res.setHeader("Content-Type", "application/json");
+    res.status(400).send(JSON.stringify({ message: "Нельзя удалять пользователей или добавлять больше одного пользователя" }));
+  }
+};
+
+const checkIsGameExists = async (req, res, next) => {
+  const isInArray = req.gamesArray.find((game) => {
+    return req.body.title === game.title;
+  });
+  if (isInArray) {
+    res.setHeader("Content-Type", "application/json");
+        res.status(400).send(JSON.stringify({ message: "Игра с таким названием уже существует" }));
+  } else {
+    next();
+  }
+}; 
+
+module.exports = {
+  findAllGames,
+  createGame,
+  findGameById,
+  updateGame,
+  deleteGame,
+  checkEmptyFiles,
+  checkIfCategoriesAvaliable,
+  checkIfUsersAreSafe,
+  checkIsGameExists
+};

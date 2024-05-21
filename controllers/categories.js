@@ -20,7 +20,7 @@ const sendCategoryUpdated = (req, res) => {
 
 const sendCategoryDeleted = (req, res) => {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ message: 'Категория Удалена' }));
+  res.end(JSON.stringify(req.category));
 }
 
 module.exports = {

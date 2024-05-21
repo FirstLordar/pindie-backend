@@ -18,6 +18,7 @@ const createCategory = async (req, res, next) => {
 }
 
 const findCategoryById = async (req, res, next) => {
+  console.log("GET /categories/:id");
   try {
     req.category = await categories.findById(req.params.id)
     next()
@@ -38,6 +39,7 @@ const updateCategory = async (req, res, next) => {
 };
 
 const deleteCategory = async (req, res, next) => {
+  console.log("DELETE /categories/:id");
   try {
     req.category = await categories.findByIdAndDelete(req.params.id)
     next()
@@ -47,19 +49,36 @@ const deleteCategory = async (req, res, next) => {
   }
 }
 
-const checkIfCategoriesAvaliable = async (req, res, next) => {
-  if (req.body.categories || req.body.categories.length === 0) {
+const checkIsCategoryExists = async (req, res, next) => {
+  const isInArray = req.categoriesArray.find((category) => {
+    return req.body.name === category.name;
+  });
+  if (isInArray) {
     res.setHeader("Content-Type", "application/json");
-    res.status(400).send(JSON.stringify({ message: "Выбери хотя бы одну категорию" }));
+        res.status(400).send(JSON.stringify({ message: "Категория с таким названием уже существует" }));
+  } else {
+    next();
+  }
+};
+
+const checkEmptyName = async (req, res, next) => {
+  if (
+    !req.body.name
+  ) {
+    res.setHeader('Content-Type', 'application/json')
+    res.status(404).send(JSON.stringify({ messaage: 'Введите название категории' }))
   } else {
     next()
   }
 }
+
+
 module.exports = {
   findAllCategories,
   createCategory,
   findCategoryById,
   updateCategory,
   deleteCategory,
-  checkIfCategoriesAvaliable
+  checkIsCategoryExists,
+  checkEmptyName
 }; 
