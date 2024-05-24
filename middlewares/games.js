@@ -1,20 +1,21 @@
 const games = require('../models/game')
 
 const findAllGames = async (req, res, next) => {
-    if (req.query["categories.name"]) {
-        req.gamesArray = await games.findGameByCategory(req.query["categories.name"]);
-        next()
-        return;
+    if(req.query["categories.name"]) { 
+      req.gamesArray = await games.findGameByCategory(req.query["categories.name"]);
+      next();
+      return;
     }
     req.gamesArray = await games
-        .find({})
-        .populate("categories")
-        .populate({
-            path: 'users',
-            select: "-password"
-        })
+      .find({})
+      .populate("categories")
+      .populate({
+        path: "users",
+        select: "-password"
+      })
     next();
-};
+  };
+  
 const checkIsGameExists = async (req, res, next) => {
     const isInArray = req.gamesArray.find((game) => {
         return req.body.title === game.title;
@@ -116,11 +117,13 @@ const checkIfUsersAreSafe = async (req, res, next) => {
 };
 
 const checkIsVoteRequest = async (req, res, next) => {
-    if (Object.keys(req.body).length === 1 && req.body.users) {
-        req.isVoteRequest = true;
-    }
-    next();
-}
+    // Если в запросе присылают только поле users
+  if (Object.keys(req.body).length === 1 && req.body.users) {
+    req.isVoteRequest = true;
+  }
+  next();
+};
+
 module.exports = {
     findAllGames,
     createGame,

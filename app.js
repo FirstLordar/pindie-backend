@@ -1,5 +1,4 @@
 const express = require('express');
-const mainRoute = require('./routes/main');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser')
@@ -23,7 +22,7 @@ app.use(
   pagesRouter,
   apiRouter,
   express.static(path.join(__dirname, "public")),
-  mainRoute
+  
 );
 
 app.listen(PORT, () => {
