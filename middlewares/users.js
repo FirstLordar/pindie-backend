@@ -1,5 +1,8 @@
 const users = require('../models/user');
 const bcrypt = require("bcryptjs");
+
+
+
 const findAllUsers = async (req, res, next) => {
     req.usersArray = await users.find({}, { password: 0 });
     next();
