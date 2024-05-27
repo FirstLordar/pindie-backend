@@ -1,5 +1,4 @@
-const jwt = require("jsonwebtoken");
-
+const jwt = require("jsonwebtoken")
 
 const checkAuth = (req, res, next) => {
   const { authorization } = req.headers;
@@ -18,13 +17,15 @@ const checkAuth = (req, res, next) => {
 
   next();
 };
-
+  
 const checkCookiesJWT = (req, res, next) => {
-  if (!req.cookies.jwt) {
-    return res.redirect("/");
-  }
-  req.headers.authorization = `Bearer ${req.cookies.jwt}`;
-  next();
-}; 
-
-module.exports = { checkAuth, checkCookiesJWT };
+    if (!req.cookies.jwt) {
+        return res.redirect("/")
+    }
+    req.headers.authorization = `Bearer ${req.cookies.jwt}`;
+    next();
+};
+module.exports = {
+    checkAuth,
+    checkCookiesJWT,
+}
