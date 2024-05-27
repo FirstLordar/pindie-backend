@@ -110,7 +110,7 @@ const checkIfUsersAreSafe = async (req, res, next) => {
     if (!req.body.users) {
         next();
         return;
-    } if (req.bod.users.length - 1 === req.body.games.length) {
+    } if (req.bod.users.length - 1 === req.game.users.length) {
         next();
         return;
     }
