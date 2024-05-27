@@ -14,7 +14,7 @@ usersRouter.post(
     hashPassword,
     createUser,
     sendCreatedUser
-  );
+  ); 
 usersRouter.get('/users:id', findUserById, sendUserById)
 usersRouter.put(
     "/users/:id",
