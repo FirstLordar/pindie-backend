@@ -1,9 +1,12 @@
+// models/user.js
+
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
@@ -12,8 +15,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
-    minlength: 8
+    required: true
   },
 });
 
@@ -38,7 +40,4 @@ userSchema.statics.findUserByCredentials = function(email, password) {
   });
 };
 
-
-
-module.exports = mongoose.model("user", userSchema);
-
+module.exports = mongoose.model('user', userSchema);
