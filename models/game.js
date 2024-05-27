@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
-const userModel = require("./user");
-const categoryModel = require("./category");
+const mongoose = require('mongoose');
+const userModel = require('./user');
+const categoryModel = require('./category');
 
 const gameSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
   },
   developer: {
     type: String,
@@ -23,21 +23,19 @@ const gameSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  users: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: userModel
-    }
-  ],
-  categories: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: categoryModel
-    }
-  ]
+  // Добавляем поле для списка пользователей
+  users: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: userModel,
+  }],
+  // Добавляем поле для списка категорий
+  categories: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: categoryModel,
+  }],
 });
 
-
+// Добавим метод для поиска игр по категории 
 gameSchema.statics.findGameByCategory = function(category) {
   return this.find({})
     .populate({
@@ -51,6 +49,6 @@ gameSchema.statics.findGameByCategory = function(category) {
     .then(games => {
       return games.filter(game => game.categories.length > 0);
     });
-};
+}; 
 
 module.exports = mongoose.model('game', gameSchema);
